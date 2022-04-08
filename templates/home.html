@@ -1,0 +1,82 @@
+<html>
+	<body>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<h3>Enter Card Info</h3>
+		<form action="/batch" method="POST" id="inputForm">
+			Name: <input name="Name1" id="Name1"  value="Josh"/><br>
+			Credit Card Number: <input name="CC1" value="4111111111111111"/><br>
+			CVV: <input name="CVV1" value="999"/><br>
+			Amount: <input name="Amount1" value="999.99"/></br>
+			<br/>
+			Name: <input name="Name2" value="Kali"/><br>
+			Credit Card Number: <input name="CC2" value="4342561104692751"/><br>
+			CVV: <input name="CVV2" value="999"/><br>
+			Amount: <input name="Amount2" value="999999.99"/></br>
+			<br/>
+			Name: <input name="Name3" value="Abraxas"/><br>
+			Credit Card Number: <input name="CC3" value="4342561535868087"/><br>
+			CVV: <input name="CVV3" value="333"/><br>
+			Amount: <input name="Amount3" value="777"/></br>
+			<input type="submit" value="Submit" />
+		</form>
+		<div id="inboundOutput"></div>
+		<hr>
+		<h3>Enter Batch Info</h3>
+		<form action="/verify" method="POST" id="batchValidationForm">
+			<textarea id="batch" name="batch" rows="4" cols="50"></textarea><br>
+			<input type="submit" value="Submit">
+		</form>
+		<div id="batchOutput"></div>
+
+		<script>
+			$("#inputForm").submit(function(e) {
+		    e.preventDefault(); // avoid to execute the actual submit of the form.
+
+		    var form = $(this);
+		    var actionUrl = form.attr('action');
+		    
+		    $.ajax({
+		        type: "POST",
+		        url: actionUrl,
+		        contentType: 'application/json',
+		        dataType: 'json',
+		        data: getFormData(form.serialize()), // serializes the form's elements.
+		        success: function(data)
+		        {
+		          $('#inboundOutput').text(JSON.stringify(data))
+		          $('#batch').val(JSON.stringify(data))
+		        }
+		    });
+
+		    function getFormData(data) {
+		    	var rawItems = data.split("&");
+		    	var jsonified = {};
+		    	for(var i=0;i<rawItems.length;i++){
+		    		var items = rawItems[i].split('=');
+		    		jsonified[items[0]] = items[1]
+		    	}
+		    	return JSON.stringify(jsonified)
+			}
+		});
+		
+		$("#batchValidationForm").submit(function(e) {
+		    e.preventDefault(); // avoid to execute the actual submit of the form.
+		    var form = $(this);
+		    var actionUrl = form.attr('action');
+		    //alert( $('#batch').val())
+		    $.ajax({
+		        type: "POST",
+		        url: actionUrl,
+		        contentType: 'application/json',
+		        dataType: 'json',
+		        data: $('#batch').val(),
+		        success: function(data)
+		        {
+		          $('#batchOutput').text(JSON.stringify(data))
+		        }
+		    });
+		    
+		});
+		</script>
+	</body>
+<html>
